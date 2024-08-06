@@ -1,1 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La France Gagne L'euro</title>
+    <style>
+        html, body {
+            overflow: hidden; /* Supprime les barres de défilement horizontal et vertical */
+            margin: 0; /* Supprime les marges par défaut qui pourraient également introduire des barres de défilement */
+            padding: 0; /* Supprime le padding par défaut */
+        }
+        #Karine-Balbon {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; /* Assure que rien ne dépasse */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; /* Empile les éléments verticalement */
+        }
+        .video-container {
+            width: 33.33vw; /* Un tiers de la largeur de la fenêtre */
+            height: 33.33vh; /* Un tiers de la hauteur de la fenêtre */
+            max-width: 100vw;
+            max-height: 100vh;
+            cursor: pointer; /* Change le curseur pour indiquer que l'élément est cliquable */
+            position: relative; /* Pour positionner le menu contextuel */
+        }
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ajuste la vidéo pour couvrir le conteneur sans déformation */
+        }
+        /* Style pour le menu contextuel */
+        #contextMenu {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        #contextMenu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #contextMenu ul li {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        #contextMenu ul li:hover {
+            background-color: #f0f0f0;
+        }
+        /* Style pour le bouton de boucle */
+        #loopButton {
+            margin-top: -10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #loopButton.active {
+            background-color: #28A745;
+        }
+        video {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="Karine-Balbon">
+        <!-- La vidéo sera insérée ici via JavaScript -->
+        <div id="contextMenu">
+            <ul>
+                <li id="copyTextOption">Intégrer un élément</li>
+            </ul>
+        </div>
+        <button id="loopButton">lire en boucle</button>
+    </div>
 
+    <script>
+        function adjustVideoDimensions() {
+            const videoContainer = document.querySelector('.video-container');
+            if (videoContainer) {
+                if (window.innerWidth > window.innerHeight) {
+                    // Orientation paysage
+                    videoContainer.style.width = 'auto';
+                    videoContainer.style.height = '90%';
+                } else {
+                    // Orientation portrait
+                    videoContainer.style.width = '95%';
+                    videoContainer.style.height = 'auto';
+                }
+            }
+        }
+
+        const textToCopy = `<video controls="controls" src="https://thesevendeadlysinsds.github.io/audio-mp3/humour/CETTE%20EQUIPE%20VA%20GAGNER%20L'EURO%20(FRANCE%20VS%20PORTUGAL)-(1080p)/Les%20Autres%20Rencontres/Karine%20Balbon.mp4" type="video/mp4"></video>`;
+
+        function copyText() {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert(`Texte copié : "${textToCopy}"`);
+            }).catch(err => {
+                console.error('Erreur lors de la copie :', err);
+            });
+        }
+
+        function showContextMenu(event) {
+            event.preventDefault(); // Empêche le menu contextuel par défaut
+            const contextMenu = document.getElementById('contextMenu');
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = `${event.pageX}px`;
+            contextMenu.style.top = `${event.pageY}px`;
+        }
+
+        function hideContextMenu() {
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        function toggleLoop() {
+            const video = document.querySelector('video');
+            const loopButton = document.getElementById('loopButton');
+            if (video) {
+                video.loop = !video.loop;
+                loopButton.classList.toggle('active');
+                loopButton.textContent = video.loop ? 'ne plus lire en boucle' : 'lire en boucle';
+            }
+        }
+
+        // Créer l'élément vidéo
+        const videoElement = document.createElement('video');
+        videoElement.setAttribute('controls', 'controls'); // Ajoute les contrôles de lecture
+        videoElement.setAttribute('src', './Karine Balbon.mp4');
+        videoElement.setAttribute('type', 'video/mp4');
+        videoElement.setAttribute('poster', 'https://le-reveil-vivarais.fr/wp-content/uploads/2024/02/regulierement-des-usagers-restent-a-quai-ne-pouvant-monter-dans-le-train-pour-monter-sur-lyon-1280x640.jpg');
+
+        // Créer un conteneur pour la vidéo
+        const videoContainer = document.createElement('div');
+        videoContainer.classList.add('video-container');
+        videoContainer.appendChild(videoElement);
+
+        // Ajouter le conteneur de la vidéo au div avec l'ID 'Karine-Balbon'
+        const karineBalbonDiv = document.getElementById('Karine-Balbon');
+        karineBalbonDiv.appendChild(videoContainer);
+
+        // Initialiser les dimensions de la vidéo
+        adjustVideoDimensions();
+
+        // Mettre à jour les dimensions lors du redimensionnement de la fenêtre
+        window.addEventListener('resize', adjustVideoDimensions);
+
+        // Ajouter l'écouteur d'événement de clic droit à la vidéo
+        videoContainer.addEventListener('contextmenu', showContextMenu);
+
+        // Ajouter l'écouteur d'événement pour les clics en dehors du menu contextuel
+        document.addEventListener('click', hideContextMenu);
+
+        // Ajouter l'écouteur d'événement pour l'option du menu contextuel
+        document.getElementById('copyTextOption').addEventListener('click', copyText);
+
+        // Ajouter l'écouteur d'événement pour le bouton de boucle
+        document.getElementById('loopButton').addEventListener('click', toggleLoop);
+    </script>
+</body>
+</html>
